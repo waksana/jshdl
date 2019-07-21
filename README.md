@@ -3,30 +3,48 @@ jshdl
 
 js hardware description language for fun
 
-## wire
+## bit
 
 ```typescript
-const wire = new Wire();
+const a = new Bit();
 
-wire.watch(v => console.log('state changed', v));
-wire.value = 1; //state changed 1
+a.value = 0;
+a.value = 1;
 ```
 
 ## gate
 
 ```typescript
-const a = new Wire();
-const b = new Wire();
-const c = new Wire();
+const a = new Bit();
+const b = new Bit();
 
-const aAndBAndC = and(a, b, c);
-const aOrBOrC = or(a, b, c);
-const notA = not(a);
+const c = and(a)(b);
+
+a.value = 0
+b.value = 1
+assert.equal(c.value, 0);
+
+a.value = 1
+b.value = 1
+assert.equal(c.value, 1);
 ```
 
-## bus
+## signal
 
 ```typescript
-const bus = Bus.create(8); // 8 wires(bits)
-bus.value = 255; // set all 8 wires to 1
+// 8 bits signal
+const signal = Signal.createWithWidth(8);
+
+signal.value = 255;
+assert(signal.bits.every(bit => bit.value === 1));
+
+signal.value = 0;
+assert(signal.bits.every(bit => bit.value === 0));
+
+// lift bit functions to signal
+const andSignal = Signal.lift2(and);
+
+signal.value = 138;
+const signal2 = Signal.createWithValueAndWidth(137, 8);
+assert.equal(andSignal(signal)(signal2).value, 136);
 ```
