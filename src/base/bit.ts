@@ -11,4 +11,10 @@ export class Bit {
     }
   }
   get value() { return this._value; }
+  connect(dist: Bit) {
+    dist.value = this.value;
+    this.watcher.add(() => {
+      dist.value = this.value;
+    });
+  }
 }
